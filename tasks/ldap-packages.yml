@@ -1,0 +1,28 @@
+---
+
+- name: Packages | Install
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - python-pip
+    - gcc
+    - python-devel
+    - openldap-devel
+  tags:
+    - 389-config
+    - preparation
+
+- name: pip | Upgrade
+  command: pip install --upgrade pip
+  tags:
+    - 389-config
+    - preparation
+
+- name: python-ldap | Install
+  pip:
+    name: python-ldap
+    state: present
+  tags:
+    - 389-config
+    - preparation

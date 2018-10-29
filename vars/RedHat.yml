@@ -1,0 +1,11 @@
+---
+# __dirsrv_packages: 
+#   - 389-ds-base
+#   - 389-console
+#   - 389-admin
+#   - openldap-clients
+
+
+dirsrv_group: nobody
+dirsrv_user: nobody
+dirsrv_setupdsadmin: setup-ds-admin.pl

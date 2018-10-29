@@ -1,0 +1,18 @@
+galaxy_info:
+  author: Sami Silén
+  description: 389 Directory Server for RedHat and Debian
+  company: CSC - IT Center for Science
+  license: license (BSD, MIT)
+
+  min_ansible_version: 2.2
+
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: EL
+    versions:
+    - all
+
+  galaxy_tags:
+    - ldap

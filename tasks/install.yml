@@ -1,0 +1,85 @@
+---
+# tasks file for 389ds
+- name: Add Epel repository
+  yum: 
+    name: epel-release 
+    state: present
+
+- name: Add host | Add IP and FQDN to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ ansible_default_ipv4.address }}"
+    line: "{{ dirsrv_ip }} {{ dirsrv_fqdn }} {{ dirsrv_hostname }}"
+  tags:
+    - 389ds
+    - configure
+
+- name: 389ds | Initialize
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_os_family }}.yml"
+    - "default.yml"
+  tags:
+    - 389ds
+    - install
+
+- name: 389ds | Install packages
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - 389-ds-base
+    - 389-console
+    - 389-admin
+    - openldap-clients
+  tags:
+    - 389ds
+    - install
+
+
+- name: Sysctl | Configure
+  sysctl:
+    name: "{{item.name}}"
+    value: "{{item.value}}"
+    sysctl_set: yes
+    state: present
+  with_items:
+    - { name: net.ipv4.tcp_keepalive_time, value: 300 }
+    - { name: net.ipv4.ip_local_port_range, value: "1024 65000" }
+    - { name: fs.file-max, value: 64000 }
+  when: dirsrv_fqdn != "local.dev"
+  tags:
+    - sysctl
+    - configure
+      
+- name: Dirsrv systemd service | Configure file descriptors 
+  lineinfile:
+    path: /etc/sysconfig/dirsrv.systemd
+    state: present
+    insertafter: "^[Service]"
+    line: LimitNOFILE=8192
+  when: dirsrv_fqdn != "local.dev"
+  tags:
+    - 389ds
+    - systemd
+
+- name: 389ds | Silent setup file 
+  template: 
+    src: templates/dirsrv.inf 
+    dest: /tmp/dirsrv.inf
+  tags:
+    - 389ds
+
+- name: 389ds | setup-ds-admin.pl | Execute | {{ dirsrv_hostname }} | {{ dirsrv_fqdn }} | {{ dirsrv_suffix }} 
+  shell: /usr/sbin/{{ dirsrv_setupdsadmin }} --silent --file=/tmp/dirsrv.inf --logfile=/tmp/389install.log creates=/etc/dirsrv/slapd-{{ dirsrv_hostname }}/dse.ldif
+
+# Enabled services in order to connect to directory server
+- name: 389ds | Enable | service
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items: 
+    - dirsrv.target
+    - dirsrv-admin.service
+

@@ -1,0 +1,27 @@
+[General] 
+FullMachineName= {{ dirsrv_fqdn }}
+SuiteSpotUserID = {{ dirsrv_user }}
+SuiteSpotGroup = {{ dirsrv_group }}
+AdminDomain= {{ dirsrv_admin_domain }}
+ConfigDirectoryAdminID= admin 
+ConfigDirectoryAdminPwd= {{ dirsrv_admin_password }}
+ConfigDirectoryLdapURL= ldap://{{ dirsrv_fqdn }}:389/o=NetscapeRoot
+UserDirectoryLdapURL= ldap://{{ dirsrv_fqdn }}:389/{{ dirsrv_suffix }}
+
+[slapd] 
+SlapdConfigForMC = yes
+UseExistingMC = 0
+ServerPort= 389
+UseExistingMC = 1
+ServerIdentifier= {{ dirsrv_hostname }}
+Suffix= {{ dirsrv_suffix }}
+RootDN= {{ dirsrv_rootdn }}
+RootDNPwd= {{ dirsrv_admin_password }}
+# ds_bename={{ dirsrv_admin_domain }}
+AddSampleEntries= No
+
+[admin] 
+Port= 9830
+ServerIpAddress= 0.0.0.0
+ServerAdminID= admin 
+ServerAdminPwd= {{ dirsrv_admin_password }}
