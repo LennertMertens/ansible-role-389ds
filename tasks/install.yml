@@ -32,6 +32,7 @@
     - 389-console
     - 389-admin
     - openldap-clients
+    - java-1.6.0-openjdk
   tags:
     - 389ds
     - install
