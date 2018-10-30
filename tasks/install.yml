@@ -1,8 +1,24 @@
 ---
 # tasks file for 389ds
-- name: Add Epel repository
+
+- name: 389ds | Initialize variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "RedHat.yml"
+    - "default.yml"
+  tags:
+    - 389ds
+    - pre-tasks
+
+- name: Epel | Add repository
   yum: 
     name: epel-release 
+    state: present
+ 
+
+- name: Java | Install prequisited packages
+  yum:
+    name: java-1.6.0-openjdk
     state: present
 
 - name: Add host | Add IP and FQDN to /etc/hosts
@@ -12,31 +28,7 @@
     line: "{{ dirsrv_ip }} {{ dirsrv_fqdn }} {{ dirsrv_hostname }}"
   tags:
     - 389ds
-    - configure
-
-- name: 389ds | Initialize
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_os_family }}.yml"
-    - "default.yml"
-  tags:
-    - 389ds
-    - install
-
-- name: 389ds | Install packages
-  package:
-    name: "{{ item }}"
-    state: installed
-  with_items:
-    - 389-ds-base
-    - 389-console
-    - 389-admin
-    - openldap-clients
-    - java-1.6.0-openjdk
-  tags:
-    - 389ds
-    - install
-
+    - pre-tasks
 
 - name: Sysctl | Configure
   sysctl:
@@ -50,20 +42,42 @@
     - { name: fs.file-max, value: 64000 }
   when: dirsrv_fqdn != "local.dev"
   tags:
-    - sysctl
-    - configure
-      
-- name: Dirsrv systemd service | Configure file descriptors 
+    - 389ds
+    - pre-tasks
+
+- name: Ulimit Values | Set ulimlotvalue to 8192 in /etc/profile
   lineinfile:
-    path: /etc/sysconfig/dirsrv.systemd
-    state: present
-    insertafter: "^[Service]"
-    line: LimitNOFILE=8192
-  when: dirsrv_fqdn != "local.dev"
+    path: /etc/profile
+    line: "ulimit -n 8192"
   tags:
     - 389ds
-    - systemd
+    - pre-tasks
 
+- name: pam.d Login | Add required values    
+  lineinfile:
+    path: /etc/pam.d/login 
+    line: "session    required     /usr/lib64/security/pam_limits.so"
+    create: yes
+
+
+- name: 389ds | Install packages
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+      - 389-ds-base.x86_64
+      - openldap-clients.x86_64
+      - 389-admin.x86_64
+      - 389-adminutil.x86_64 
+      - 389-ds.noarch
+      - 389-ds-base.x86_64 
+      - 389-ds-console-doc.noarch
+  tags:
+    - 389ds
+    - install
+
+
+# This step configures the 389 directory server
 - name: 389ds | Silent setup file 
   template: 
     src: templates/dirsrv.inf 
