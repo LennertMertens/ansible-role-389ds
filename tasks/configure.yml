@@ -1,4 +1,5 @@
-- name: Remove existing entries
+---
+- name: Remove | Remove existing entries
   ldap_entry:
     dn: "{{ item }}"
     state: absent
@@ -8,7 +9,7 @@
     - 389ds
     - config
 
-- name: Create OU's
+- name: Add | Add OU's
   ldap_entry:
     dn: "ou={{ item }},{{ dirsrv_suffix }}"
     objectClass: organizationalUnit
@@ -21,7 +22,7 @@
     - 389ds
     - config
 
-- name: Generate LDIF file
+- name: ldap.ldif | Generate LDIF file
   template:
     src: ldap.ldif.j2
     dest: /tmp/ldap.ldif
@@ -29,7 +30,7 @@
     - 389ds
     - config
 
-- name: Add LDAP Entries
+- name: Add | Add LDAP Entries
   shell: "ldapadd -x -D \"{{ dirsrv_rootdn }}\" -w {{ dirsrv_password }} -f /tmp/ldap.ldif && touch /opt/ldap_added"
   args:
     creates: "/opt/ldap_added"

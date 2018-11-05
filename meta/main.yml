@@ -16,3 +16,6 @@ galaxy_info:
     - 389ds
     - openldap
     - dirsrv
+    - users
+    - active
+    - directory

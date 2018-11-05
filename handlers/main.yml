@@ -1,9 +1,11 @@
 ---
-# handlers file for 389-ds
+# handlers file for 389ds
 - name: restart dirsrv
-  #  service: name=dirsrv.target state=restarted
-  systemd: name=dirsrv.target state=restarted
+  systemd: 
+    name: dirsrv.target 
+    state: restarted
 
 - name: restart dirsrv-admin
-  #  service: name=dirsrv-admin state=restarted
-  systemd: name=dirsrv-admin state=restarted
+  systemd:
+    name: dirsrv-admin
+    state: restarted

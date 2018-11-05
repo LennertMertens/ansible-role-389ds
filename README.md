@@ -11,29 +11,67 @@ No specific requirements
 
 ## Role Variables
 
-
-| Variable | Purpose |
-| :------- | :------ |
-| `dirsrv_password` | Password, **be sure to set** |
-| `dirsrv_admin_password` | Admin password ( Default: dirsrv_password ) |
-| `dirsrv_fqdn` | FQDN  (Default: ansible_fqdn, if ansible_fqdn fails or is wrong for you, set proper one )|
-| `dirsrv_suffix` | Default: last two parts from dirsrv_fqdn |
-| `dirsrv_hostname` | Default: first part from dirsrv_fqdn |
-| `dirsrv_ip` | IP address of the 389 directory server. Default `127.0.0.1`|
+| Variable                | Purpose                                                                                   |
+| :-------                | :------                                                                                   |
+| `dirsrv_password`       | Password, **be sure to set**                                                              |
+| `dirsrv_admin_password` | Admin password ( Default: dirsrv_password )                                               |
+| `dirsrv_fqdn`           | FQDN  (Default: ansible_fqdn, if ansible_fqdn fails or is wrong for you, set proper one ) |
+| `dirsrv_suffix`         | Default: last two parts from dirsrv_fqdn                                                  |
+| `dirsrv_hostname`       | Default: first part from dirsrv_fqdn                                                      |
+| `dirsrv_ip`             | IP address of the 389 directory server. Default `127.0.0.1`                               |
+| `dirsrv_remove_entries` | List of default LDAP entries to be deleted when installing                                |
+| `dirsrv_groups`         | List of groups to be created on directory server                                          |
+| `dirsrv_users`          | List of users to be created on directory server                                           |
 
 ## Dependencies
 - `bertvv.rh-base` role to add and open the required ports
 
+## Prerequisites
+- Open the required ports for LDAP:
+```yml
+rhbase_firewall_allow_ports:
+  - 389/tcp
+  - 9830/tcp
+  - 636/tcp
+  - 3269/tcp
+```
+
 ## Example Playbook
+### Remove entries
+```yaml
+dirsrv_remove_entries:
+  - "ou=Special Users,dc=green,dc=local"
+  - "cn=Accounting Managers,ou=Groups,dc=green,dc=local"
+```
 
-See the test playbooks in either the [Vagrant](https://github.com/bertvv/ansible-role-ROLENAME/blob/vagrant-tests/test.yml) or [Docker](https://github.com/bertvv/ansible-role-ROLENAME/blob/docker-tests/test.yml) test environment. See the section Testing for details.
+### Add groups
+```yaml
+dirsrv_groups:
+  - name: it
+    gidnumber: 1001
+    members:
+      - linus
+  - name: sales
+    gidnumber: 1002
+    members:
+      - mark
+```
 
-## Testing
+### Add users
+```yml
+dirsrv_users:
+  - uid: linus
+    cn: Linus
+    sn: Torvalds
+    description: Linus Torvalds
+    password: "{SSHA}dIfwvAy7VNBkjywXaAXsgLPCiXemGegCShfPVQ==" # hash for "Test123"
+    uidnumber: 700
+    gidnumber: 700
+    loginshell: /bin/bash
+    homedirectory: /home/linus
+```
 
-There are two types of test environments available. One powered by Vagrant, another by Docker. The latter is suitable for running automated tests on Travis-CI. Test code is kept in separate orphan branches. For details of how to set up these test environments on your own machine, see the README files in the respective branches:
 
-- Vagrant: [vagrant-tests](https://github.com/bertvv/ansible-role-ROLENAME/tree/vagrant-tests)
-- Docker: [docker-tests](https://github.com/bertvv/ansible-role-ROLENAME/tree/docker-tests)
 
 ## Contributing
 
