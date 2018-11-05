@@ -4,7 +4,7 @@
 # 389-ds
 dirsrv_fqdn: "{{ ansible_fqdn }}"
 dirsrv_password: not_set_yet
-dirsrv_rootdn: "cn=admin"
+dirsrv_rootdn: "cn=Directory Manager"
 dirsrv_hostname: "{{ dirsrv_fqdn.split('.')[0] }}"
 dirsrv_suffix: "dc={{ dirsrv_fqdn.split('.')[-2] | default(389) }},dc={{ dirsrv_fqdn.split('.')[-1] }}"
 

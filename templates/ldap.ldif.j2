@@ -1,0 +1,29 @@
+{% for user in dirsrv_users %}
+dn: uid={{ user.uid }},ou=People,{{ dirsrv_suffix }}
+cn: {{ user.cn }}
+sn: {{ user.sn }}
+objectclass: top
+objectclass: person
+objectclass: posixAccount
+objectclass: shadowAccount
+uid:{{ user.uid }}
+userPassword:{{ user.password }}
+uidNumber:{{ user.uidnumber }}
+gidNumber:{{ user.gidnumber }}
+gecos:{{ user.cn }}
+loginShell:{{ user.loginshell }}
+homeDirectory:{{ user.homedirectory }}
+
+{% endfor %}
+
+{% for group in dirsrv_groups %}
+dn: cn={{ group.name }},ou=Groups,{{ dirsrv_suffix }}
+objectclass: top
+objectclass: posixGroup
+cn: {{ group.name }}
+gidnumber: {{ group.gidnumber }}
+{% for member in group.members %}
+memberuid: {{ member }}
+{% endfor %}
+
+{% endfor %}

@@ -11,10 +11,10 @@
     - pre-tasks
 
 - name: Epel | Add repository
-  yum: 
-    name: epel-release 
+  yum:
+    name: epel-release
     state: present
- 
+
 
 - name: Java | Install prequisited packages
   yum:
@@ -53,9 +53,9 @@
     - 389ds
     - pre-tasks
 
-- name: pam.d Login | Add required values    
+- name: pam.d Login | Add required values
   lineinfile:
-    path: /etc/pam.d/login 
+    path: /etc/pam.d/login
     line: "session    required     /usr/lib64/security/pam_limits.so"
     create: yes
 
@@ -68,9 +68,9 @@
       - 389-ds-base.x86_64
       - openldap-clients.x86_64
       - 389-admin.x86_64
-      - 389-adminutil.x86_64 
+      - 389-adminutil.x86_64
       - 389-ds.noarch
-      - 389-ds-base.x86_64 
+      - 389-ds-base.x86_64
       - 389-ds-console-doc.noarch
   tags:
     - 389ds
@@ -78,14 +78,14 @@
 
 
 # This step configures the 389 directory server
-- name: 389ds | Silent setup file 
-  template: 
-    src: templates/dirsrv.inf 
+- name: 389ds | Silent setup file
+  template:
+    src: templates/dirsrv.inf
     dest: /tmp/dirsrv.inf
   tags:
     - 389ds
 
-- name: 389ds | setup-ds-admin.pl | Execute | {{ dirsrv_hostname }} | {{ dirsrv_fqdn }} | {{ dirsrv_suffix }} 
+- name: 389ds | setup-ds-admin.pl | Execute | {{ dirsrv_hostname }} | {{ dirsrv_fqdn }} | {{ dirsrv_suffix }}
   shell: /usr/sbin/{{ dirsrv_setupdsadmin }} --silent --file=/tmp/dirsrv.inf --logfile=/tmp/389install.log creates=/etc/dirsrv/slapd-{{ dirsrv_hostname }}/dse.ldif
 
 # Enabled services in order to connect to directory server
@@ -94,7 +94,6 @@
     name: "{{ item }}"
     state: started
     enabled: yes
-  with_items: 
+  with_items:
     - dirsrv.target
     - dirsrv-admin.service
-

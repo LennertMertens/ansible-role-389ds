@@ -1,0 +1,38 @@
+- name: Remove existing entries
+  ldap_entry:
+    dn: "{{ item }}"
+    state: absent
+    params: "{{ dirsrv_auth }}"
+  with_items: "{{ dirsrv_remove_entries }}"
+  tags:
+    - 389ds
+    - config
+
+- name: Create OU's
+  ldap_entry:
+    dn: "ou={{ item }},{{ dirsrv_suffix }}"
+    objectClass: organizationalUnit
+    state: present
+    params: "{{ dirsrv_auth }}"
+  with_items:
+    - People
+    - Groups
+  tags:
+    - 389ds
+    - config
+
+- name: Generate LDIF file
+  template:
+    src: ldap.ldif.j2
+    dest: /tmp/ldap.ldif
+  tags:
+    - 389ds
+    - config
+
+- name: Add LDAP Entries
+  shell: "ldapadd -x -D \"{{ dirsrv_rootdn }}\" -w {{ dirsrv_password }} -f /tmp/ldap.ldif && touch /opt/ldap_added"
+  args:
+    creates: "/opt/ldap_added"
+  tags:
+    - 389ds
+    - config

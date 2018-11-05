@@ -1,14 +1,14 @@
-[General] 
+[General]
 FullMachineName= {{ dirsrv_fqdn }}
 SuiteSpotUserID = {{ dirsrv_user }}
 SuiteSpotGroup = {{ dirsrv_group }}
 AdminDomain= {{ dirsrv_admin_domain }}
-ConfigDirectoryAdminID= admin 
+ConfigDirectoryAdminID= admin
 ConfigDirectoryAdminPwd= {{ dirsrv_admin_password }}
 ConfigDirectoryLdapURL= ldap://{{ dirsrv_fqdn }}:389/o=NetscapeRoot
 UserDirectoryLdapURL= ldap://{{ dirsrv_fqdn }}:389/{{ dirsrv_suffix }}
 
-[slapd] 
+[slapd]
 SlapdConfigForMC = yes
 UseExistingMC = 0
 ServerPort= 389
@@ -20,8 +20,8 @@ RootDNPwd= {{ dirsrv_admin_password }}
 # ds_bename={{ dirsrv_admin_domain }}
 AddSampleEntries= No
 
-[admin] 
+[admin]
 Port= 9830
 ServerIpAddress= 0.0.0.0
-ServerAdminID= admin 
+ServerAdminID= admin
 ServerAdminPwd= {{ dirsrv_admin_password }}
