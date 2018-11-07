@@ -81,7 +81,10 @@ Pull requests are also very welcome. The best way to submit a PR is by first cre
 
 ## License
 
-2-clause BSD license, see [LICENSE.md](LICENSE.md)
+3-clause BSD license, see [LICENSE](LICENSE.md)
+
+## Thank word
+Role is based on an outdated role created by [sasilen](https://github.com/sasilen). 
 
 ## Contributors
 
