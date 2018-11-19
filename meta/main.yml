@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: 389ds
   author: Lennert Mertens, Ismail El Kaddouri
   description: 389 Directory Server for CentOS7
   company: LMIEK
